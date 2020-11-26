@@ -29,12 +29,31 @@ struct msg_hdr_s {
 
 #define TEST_MSG "Hello World - libmetal shared memory demo"
 
+/**
+ * @breif dump_buffer() - print hex value of each byte in the buffer
+ *
+ * @param[in] buf - pointer to the buffer
+ * @param[in] len - len of the buffer
+ */
+static inline void dump_buffer(void *buf, unsigned int len)
+{
+	unsigned int i;
+	unsigned char *tmp = (unsigned char *)buf;
+
+	for (i = 0; i < len; i++) {
+		printf(" %02x", *(tmp++));
+		if (!(i % 20))
+			printf("\n");
+	}
+	printf("\n");
+}
+
 int send_msg_test(struct metal_io_region *shm_io)
 {
 	void *tx_data = NULL;
 	void *rx_data = NULL;
 	unsigned int tx_count = 0;
-//	unsigned int rx_count = 0;
+	unsigned int rx_count = 0;
 	struct msg_hdr_s *msg_hdr;
 	unsigned int data_len;
 	int ret;
@@ -75,6 +94,38 @@ int send_msg_test(struct metal_io_region *shm_io)
 	/* Increase number of buffers available to notify the remote */
 	tx_count++;
 	metal_io_write32(shm_io, SHM_TX_AVAIL_OFFSET, tx_count);
+
+	/* wait for remote to echo back the data */
+	while (metal_io_read32(shm_io, SHM_RX_AVAIL_OFFSET) == rx_count);
+	rx_count++;
+	/* New RX data is available, allocate buffer to received data */
+	rx_data = metal_allocate_memory(data_len);
+	if (!rx_data) {
+		LPERROR("Failed to allocate memory\n");
+		ret = -1;
+		goto out;
+	}
+	/* read data from the shared memory*/
+	metal_io_block_read(shm_io, SHM_RX_BUFFER_OFFSET,
+		 rx_data, data_len);
+	if (ret < 0){
+		LPERROR("Unable to metal_io_block_read()\n");
+		goto out;
+	}
+	/* verify the received data */
+	ret = memcmp(tx_data, rx_data, data_len);
+	if (ret) {
+		LPERROR("Received data verification failed.\n");
+		LPRINTF("Expected:");
+		dump_buffer(tx_data, data_len);
+		LPRINTF("Actual:");
+		dump_buffer(rx_data, data_len);
+	} else {
+		LPRINTF("Message Received: %s\n",
+			(char *)(rx_data + sizeof(*msg_hdr)));
+	}
+	/* Notify the remote the demo has finished. */
+	metal_io_write32(shm_io, SHM_DEMO_CNTRL_OFFSET, DEMO_STATUS_IDLE);
 
 out:
 	if (tx_data)
