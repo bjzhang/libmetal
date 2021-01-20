@@ -24,6 +24,11 @@ if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
   find_package(LibRt REQUIRED)
   collect (PROJECT_LIB_DEPS "${LIBRT_LIBRARIES}")
 
+  if (CMAKE_CROSSCOMPILING AND "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "riscv")
+    find_package(LibAtomic REQUIRED)
+    collect (PROJECT_LIB_DEPS "${LIBATOMIC_LIBRARIES}")
+  endif(CMAKE_CROSSCOMPILING AND "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "riscv")
+
 else ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
 
   # TODO: fix for find_path() to detect stdatomic.h

@@ -6,4 +6,4 @@ set(CMAKE_C_COMPILER ${prefix}gcc)
 
 #include (rv64_linux_toolchain_file)
 set (MACHINE                "rv64_virt"	CACHE STRING "")
-set (CMAKE_C_FLAGS		"-ggdb -latomic"	CACHE STRING "")
+set (CMAKE_C_FLAGS		"-ggdb"	CACHE STRING "")
