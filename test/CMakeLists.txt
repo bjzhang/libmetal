@@ -7,6 +7,10 @@ collect (PROJECT_LIB_HEADERS metal-test.h)
 collect (PROJECT_LIB_TESTS version.c)
 collect (PROJECT_LIB_TESTS metal-test.c)
 
+if (${MACHINE} STREQUAL "rv64_virt")
+   collect (PROJECT_LIB_DEPS atomic)
+endif (${MACHINE} STREQUAL "rv64_virt")
+
 collector_list  (_hdirs PROJECT_INC_DIRS)
 include_directories (${_hdirs} ${CMAKE_CURRENT_SOURCE_DIR})
 
