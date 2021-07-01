@@ -12,6 +12,7 @@
 #include <metal/compiler.h>
 #include <metal/sys.h>
 #include <metal/utilities.h>
+#include <rtthread.h>
 
 static METAL_DECLARE_LIST(test_cases);
 
@@ -49,6 +50,7 @@ char metal_weak *strerror(int errnum)
 
 void metal_add_test_case(struct metal_test_case *test_case)
 {
+	printf("%s\n", __func__);
 	metal_list_add_tail(&test_cases, &test_case->node);
 }
 
@@ -69,6 +71,8 @@ int metal_tests_run(struct metal_init_params *params)
 	if (error)
 		return error;
 
+	printf("%s\n", __func__);
+	metal_log(METAL_LOG_INFO,"%s\n", __func__);
 	metal_list_for_each(&test_cases, node) {
 		test_case = metal_container_of(node, struct metal_test_case,
 					       node);
@@ -84,7 +88,24 @@ int metal_tests_run(struct metal_init_params *params)
 			errors++;
 	}
 
+	//extern int atomic(void);
+	//printf("atomic test\n");
+	//atomic();
+	//printf("atomic test end\n");
+	extern int mutex(void);
+	printf("mutex test\n");
+	mutex();
+	printf("mutex test end\n");
 	metal_finish();
 
 	return errors;
 }
+
+void metal_tests_run_wrapper(void)
+{
+	metal_tests_run(NULL);
+}
+
+FINSH_FUNCTION_EXPORT(metal_tests_run_wrapper, libmetal test cases);
+FINSH_FUNCTION_EXPORT_ALIAS(metal_tests_run_wrapper, metal_test, libmetal test cases);
+MSH_CMD_EXPORT(metal_tests_run_wrapper, libmetal test cases);

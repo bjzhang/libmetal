@@ -9,7 +9,6 @@
  * @brief	Linux libmetal irq operations
  */
 
-#define _GNU_SOURCE
 #include <pthread.h>
 #include <sched.h>
 #include <metal/device.h>
