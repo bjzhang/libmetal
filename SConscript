@@ -9,7 +9,6 @@ include_path = Split("""
 lib/include
 test
 lib/include/metal/processor
-open-amp/lib/include
 """)
 
 src = Split("""

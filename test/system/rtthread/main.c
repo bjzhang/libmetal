@@ -70,12 +70,3 @@ int thread_static_simple()
 FINSH_FUNCTION_EXPORT(thread_static_simple, thread example);
 MSH_CMD_EXPORT(thread_static_simple, thread example);
 
-int main(void)
-{
-	int status;
-
-	rt_kprintf("Hello RT-Thread on RISC-V\n");
-
-	return status;
-}
-
