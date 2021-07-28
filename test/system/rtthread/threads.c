@@ -16,6 +16,8 @@
 #define THREAD_STACK_SIZE       512
 #define THREAD_TIMESLICE        10
 
+typedef void (*rtt_thread_t)(void *);
+
 static void libmetal_usleep1(int ms)
 {
     rt_thread_mdelay(ms);
@@ -51,7 +53,7 @@ int metal_run_noblock(int threads, metal_thread_t child,
     for (i = 0; i < threads; i++)
     {
         sprintf(name, "thread%00x", i);
-        tid_p[i] = rt_thread_create(name, child, arg,
+        tid_p[i] = rt_thread_create(name, (rtt_thread_t)child, arg,
                                      THREAD_STACK_SIZE, THREAD_PRIORITY,
                                      THREAD_TIMESLICE);
         if (tid_p[i] != RT_NULL)

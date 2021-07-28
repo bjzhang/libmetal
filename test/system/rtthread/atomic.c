@@ -19,8 +19,9 @@
 #define THREAD_TIMESLICE        10
 
 static const int atomic_test_count = 10;
+typedef void (*rtt_thread_t)(void *);
 
-static void atomic_thread(void *arg)
+static void *atomic_thread(void *arg)
 {
 	atomic_int *c = arg;
 	int i;
@@ -49,7 +50,7 @@ int atomic(void)
 	metal_log(METAL_LOG_DEBUG, "delay test start\n");
 	rt_thread_delay(200);
 	metal_log(METAL_LOG_DEBUG, "delay test end\n");
-	thread = rt_thread_create("atomic", atomic_thread, RT_NULL,
+	thread = rt_thread_create("atomic", (rtt_thread_t)atomic_thread, RT_NULL,
 				  THREAD_STACK_SIZE,
 				  THREAD_PRIORITY,
 				  THREAD_TIMESLICE);

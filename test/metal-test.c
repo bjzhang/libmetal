@@ -12,7 +12,6 @@
 #include <metal/compiler.h>
 #include <metal/sys.h>
 #include <metal/utilities.h>
-#include <rtthread.h>
 
 static METAL_DECLARE_LIST(test_cases);
 
@@ -88,6 +87,7 @@ int metal_tests_run(struct metal_init_params *params)
 			errors++;
 	}
 
+#ifdef METAL_SYSTEM_RTTHREAD
 	//extern int atomic(void);
 	//printf("atomic test\n");
 	//atomic();
@@ -97,15 +97,23 @@ int metal_tests_run(struct metal_init_params *params)
 	mutex();
 	printf("mutex test end\n");
 	metal_finish();
+#endif /* #ifdef METAL_SYSTEM_RTTHREAD */
 
 	return errors;
 }
 
+#ifdef METAL_SYSTEM_RTTHREAD
+#include <rtthread.h>
 void metal_tests_run_wrapper(void)
 {
 	metal_tests_run(NULL);
 }
+#endif /* #ifdef METAL_SYSTEM_RTTHREAD */
 
+#ifdef RT_USING_FINSH
 FINSH_FUNCTION_EXPORT(metal_tests_run_wrapper, libmetal test cases);
 FINSH_FUNCTION_EXPORT_ALIAS(metal_tests_run_wrapper, metal_test, libmetal test cases);
+#endif /* #ifdef RT_USING_FINSH */
+#ifdef FINSH_USING_MSH
 MSH_CMD_EXPORT(metal_tests_run_wrapper, libmetal test cases);
+#endif /* #ifdef FINSH_USING_MSH */

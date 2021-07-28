@@ -18,7 +18,7 @@ static void libmetal_usleep(int ms)
     rt_thread_mdelay(ms);
 }
 
-static void mutex_thread(void *arg)
+static void *mutex_thread(void *arg)
 {
     metal_mutex_t *l = arg;
     struct rt_thread *t = rt_thread_self();
