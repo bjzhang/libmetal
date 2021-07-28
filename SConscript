@@ -2,8 +2,7 @@ Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
 
-#cwd     = os.path.join(str(Dir('#')), 'applications')
-cwd  = GetCurrentDir()
+cwd     = GetCurrentDir()
 
 include_path = Split("""
 lib/include
@@ -36,6 +35,6 @@ src += ['lib/shmem.c']
 
 CPPDEFINES = ['METAL_INTERNAL']
 
-group = DefineGroup('Applications', src, depend = [''], CPPPATH = include_path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('OpenAMP', src, depend = [''], CPPPATH = include_path, CPPDEFINES = CPPDEFINES)
 
 Return('group')
