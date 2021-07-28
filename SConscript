@@ -34,7 +34,7 @@ test/system/rtthread/threads.c
 src += ['lib/io.c']
 src += ['lib/shmem.c']
 
-CPPDEFINES = []
+CPPDEFINES = ['METAL_INTERNAL']
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = include_path, CPPDEFINES = CPPDEFINES)
 
